@@ -20,7 +20,8 @@ const makeMemberExpire = async (customer, member, guild, collection) => {
             }
         }
     );
-
+    // If the member is not in the guild, we can't remove the role
+    // Log specifically that they left the group and the role was already removed before they left
     if (!member) {
         guild.channels.cache.get(process.env.LOGS_CHANNEL_ID).send(`:arrow_lower_right: **${member?.user?.tag || 'Unknown#0000'}** (${customer.discordUserID}, <@${customer.discordUserID}>) __left the group__ and lost privileges. Email: \`${customer.email}\`.`); 
         return;
@@ -29,7 +30,7 @@ const makeMemberExpire = async (customer, member, guild, collection) => {
     member?.roles.remove(process.env.PAYING_ROLE_ID);
     guild.channels.cache.get(process.env.LOGS_CHANNEL_ID).send(`:arrow_lower_right: **${member?.user?.tag || 'Unknown#0000'}** (${member.id}, <@${member.id}>) lost privileges. Email: \`${customer.email}\`.`); 
 };
-
+// function to run daily
 module.exports = async function DailyCheck(client) {
 
     const database = await client.database
@@ -56,7 +57,8 @@ module.exports = async function DailyCheck(client) {
                         hadActiveSubscription: false
                     }
                 });
-
+            // If the member is not in the guild, we can't remove the role
+            // Log specifically that they left the group and the role was already removed before they left
                 if (!member) {
                     guild.channels.cache.get(`**Illegal Action:**: **${member?.user?.tag || 'Unknown#0000'}** (${customer.discordUserID}, <@${customer.discordUserID}>) __left the group__ and has an Email that is not being recognized. Email: \`${customer.email}\`.`); 
                     return;
