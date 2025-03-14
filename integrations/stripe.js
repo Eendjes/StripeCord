@@ -1,13 +1,7 @@
-/**
- * Sleep function
- */
 const sleep = async (ms) => await new Promise(resolve => setTimeout(resolve, ms));
 
-/**
- * Gets the Stripe customer ID for a given user email
- */
-const resolveCustomerIdFromEmail = async (email) => {
-    let customerData;
+const resolveCustomerIdsFromEmail = async (email) => {
+    let customersData = [];
 
     if (email.includes('+')) {
         const endPart = email.split('+')[1];
@@ -21,8 +15,7 @@ const resolveCustomerIdFromEmail = async (email) => {
         });
 
         const responseData = await response.json();
-        const matchingCustomers = responseData.data.filter((c) => c.email === email);
-        customerData = matchingCustomers[0];
+        customersData = responseData.data.filter((c) => c.email === email);
     } else {
         await sleep(2000); // 2-second delay
 
@@ -34,20 +27,17 @@ const resolveCustomerIdFromEmail = async (email) => {
         });
 
         const responseData = await response.json();
-        customerData = responseData.data[0];
+        customersData = responseData.data;
     }
 
-    return customerData?.id;
+    return customersData.map(customer => customer.id);
 }
-exports.resolveCustomerIdFromEmail = resolveCustomerIdFromEmail;
+exports.resolveCustomerIdsFromEmail = resolveCustomerIdsFromEmail;
 
-/**
- * Gets all the Stripe subscriptions from a given customer ID
- */
-const findSubscriptionsFromCustomerId = async (oldCustomerId) => {
+const findSubscriptionsFromCustomerId = async (customerId) => {
     await sleep(2000); // 2-second delay
 
-    const response = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${oldCustomerId}`, {
+    const response = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${customerId}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${process.env.STRIPE_API_KEY}`
@@ -59,10 +49,6 @@ const findSubscriptionsFromCustomerId = async (oldCustomerId) => {
 }
 exports.findSubscriptionsFromCustomerId = findSubscriptionsFromCustomerId;
 
-
-/**
- * Filter the active subscriptions from a list of subscriptions
- */
 const findActiveSubscriptions = (subscriptions) => {
     return subscriptions.filter(sub => sub.status === 'active' || sub.status === 'trialing' || (sub.cancel_at && sub.current_period_end > Date.now() / 1000));
 }
