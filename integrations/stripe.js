@@ -1,5 +1,11 @@
+ /**
+ * Sleep function
+ */
 const sleep = async (ms) => await new Promise(resolve => setTimeout(resolve, ms));
 
+/**
+ * Gets the Stripe customer ID for a given user email
+ */
 const resolveCustomerIdsFromEmail = async (email) => {
     let customersData = [];
 
@@ -34,6 +40,9 @@ const resolveCustomerIdsFromEmail = async (email) => {
 }
 exports.resolveCustomerIdsFromEmail = resolveCustomerIdsFromEmail;
 
+/**
+ * Gets all the Stripe subscriptions from a given customer ID
+ */
 const findSubscriptionsFromCustomerId = async (customerId) => {
     await sleep(2000); // 2-second delay
 
@@ -49,6 +58,9 @@ const findSubscriptionsFromCustomerId = async (customerId) => {
 }
 exports.findSubscriptionsFromCustomerId = findSubscriptionsFromCustomerId;
 
+/**
+ * Filter the active subscriptions from a list of subscriptions
+ */
 const findActiveSubscriptions = (subscriptions) => {
     return subscriptions.filter(sub => sub.status === 'active' || sub.status === 'trialing' || (sub.cancel_at && sub.current_period_end > Date.now() / 1000));
 }
