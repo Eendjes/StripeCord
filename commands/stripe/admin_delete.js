@@ -40,10 +40,7 @@ module.exports = {
                 return;
             }
 
-            if (userCustomer.hadActiveSubscription) {
-                interaction.reply({ content: `❌ | It is not possible to remove the user. There is still an active subscription at **${userCustomer.email}**.`, ephemeral: true });
-                return;
-            }
+            // removed that active users cant be deleted.
             
 
             const embed = new EmbedBuilder()
