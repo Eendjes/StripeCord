@@ -124,6 +124,11 @@ module.exports = {
 
         await interaction.reply({ embeds: [waitMessage], ephemeral: true });
 
+        const customerIds = await stripe_1.resolveCustomerIdsFromEmail(email);
+        let customerId;
+        if (customerIds.length > 0) {
+            customerId = customerIds[0];
+        }
         
         // customer id from stripe api with email provided.
         const customerId = await stripe_1.resolveCustomerIdFromEmail(email);
