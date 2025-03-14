@@ -22,7 +22,7 @@ module.exports = {
     async execute(client, interaction, database) {
 
         const email = interaction.options.getString('email');
-        const customer_discord = interaction.options.getUser('member')
+        const customer_discord = interaction.options.getMember('member')
 
         // Regex to validate the email
         const emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -97,8 +97,11 @@ module.exports = {
         await interaction.reply({ embeds: [waitMessage], ephemeral: true });
 
         
-        // customer id from stripe api with email provided.
-        const customerId = await stripe_1.resolveCustomerIdFromEmail(email);
+        const customerIds = await stripe_1.resolveCustomerIdsFromEmail(email);
+        let customerId;
+        if (customerIds.length > 0) {
+            customerId = customerIds[0];
+        }
 
         /**
          * If the user doesn't have an account created in Stripe, we'll let them know.
